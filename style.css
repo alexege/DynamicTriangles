@@ -1,0 +1,68 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow: hidden;
+}
+
+polygon {
+    fill: black;
+  }
+  polygon:hover {
+    fill: white;
+    stroke: red;
+    stroke-width: 2;
+  }
+
+  /* Option 2 */
+
+  svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+polygon {
+    pointer-events: fill;
+}
+
+#output {
+  margin-top: 120px;
+}
+
+.svg {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    /* fill: black; */
+    stroke: white;
+}
+
+.red {
+    fill: red;
+}
+
+.grow {
+    animation: grow 5s forwards ease-in-out;
+}
+
+@keyframes grow {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(0.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+#body {
+    width: 100vw;
+    height: 100vh;
+    /* background: cyan; */
+}
