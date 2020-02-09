@@ -4,7 +4,7 @@
 }
 
 body {
-    overflow: hidden;
+    /* overflow-x: hidden; */
 }
 
 polygon {
@@ -12,8 +12,8 @@ polygon {
   }
   polygon:hover {
     fill: white;
-    stroke: red;
-    stroke-width: 2;
+    /* stroke: red; */
+    /* stroke-width: 2; */
   }
 
   /* Option 2 */
@@ -23,6 +23,7 @@ polygon {
     top: 0;
     left: 0;
     pointer-events: none;
+    stroke: black;
 }
 
 polygon {
@@ -46,7 +47,7 @@ polygon {
 }
 
 .grow {
-    animation: grow 5s forwards ease-in-out;
+    animation: grow 4s forwards ease-in-out;
 }
 
 @keyframes grow {
@@ -65,4 +66,6 @@ polygon {
     width: 100vw;
     height: 100vh;
     /* background: cyan; */
+    position: absolute;
+    top: 0;
 }
