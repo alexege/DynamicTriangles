@@ -5,52 +5,141 @@ document.addEventListener("DOMContentLoaded", function () {
   traingleEffect();
 });
 
+function flashScreen(){
+  document.getElementById("body").classList.add("hit");
+  setTimeout(function(){
+    document.getElementById("body").classList.remove("hit");
+  }, 500 )
+  // document.getElementById("body").style.border = "5px solid red";
+  // const numSVGs = document.getElementsByClassName("svg")
+  // for(let i = 0; i < numSVGs; i++){
+  //   numSVGs[i].style.fill = "red";
+  // }
+  // setTimeout(() => {
+  //   document.getElementById("body").style.border = "5px solid green";
+  // }, 1000);
+}
+
+function randomSeed(){
+  console.log("random seed");
+  const svgs = document.getElementsByClassName("triangle");
+    let rand = Math.floor(Math.random() * svgs.length);
+    console.log(svgs[rand]);
+}
+
 function triangleListeners() {
   const triangles = document.getElementsByClassName("triangle");
   for (const triangle of triangles) {
     triangle.addEventListener("click", function (e) {
-      const screenHeight = document.documentElement.clientHeight;
-      let xval = e.target.parentNode.getAttribute("id").split(",")[0];
-      let yval = e.target.parentNode.getAttribute("id").split(",")[1];
 
+      // Grab the width and height of the screen
+      const screenWidth = document.documentElement.clientWidth;
+      const screenHeight = document.documentElement.clientHeight;
+
+      // Number of triangles high / wide
+      const numX = Math.ceil(screenWidth / 50);
+      const numY = Math.ceil(screenHeight / 100);
+
+      // Pull x and y coordinates off of the element
+      let xval = parseInt(e.target.parentNode.getAttribute("id").split(",")[0]);
+      let yval = parseInt(e.target.parentNode.getAttribute("id").split(",")[1]);
+
+      // Measured distance from top and bottom
       distanceFromTop = parseInt(yval);
       distanceFromBottom = Math.ceil(screenHeight / 100) - yval;
 
-      // Establish which is higher. Distance from top or bottom. Loop through that in both directions
-      if (distanceFromBottom > distanceFromTop) {
-        let j = distanceFromTop;
-        console.log("distanceTop:", distanceFromTop);
-        console.log("distanceBottom:", distanceFromBottom);
-        for (let i = distanceFromTop; i <= screenHeight; i++) {
-          // console.log(parseInt(xval) + "," + parseInt(i));
-          console.log("i:", i, ",", "j:", j);
-          let rand = Math.ceil(Math.random() * 3);
-          console.log(rand);
-          try {
-            document.getElementById(`${parseInt(xval)},${parseInt(i)}`).children[0].parentNode.classList.add("grow");
-            document.getElementById(`${parseInt(xval)},${parseInt(j)}`).children[0].parentNode.classList.add("grow");
-          } catch (e) {
+      travelRandom(xval, yval, 100, null);
 
-          }
-          j--;
-        }
-      } else {
-        console.log("TOP > BOTTOM");
-        let j = distanceFromTop;
-        for (let i = distanceFromTop; i > 0; i--) {
-          console.log("i:", i, ", j:", j);
-          try {
-            document.getElementById(`${parseInt(xval)},${parseInt(i)}`).children[0].parentNode.classList.toggle("grow");
-            document.getElementById(`${parseInt(xval)},${parseInt(j)}`).children[0].parentNode.classList.toggle("grow");
-          } catch (e) {
+      // let randColor = "";
 
-          }
-          j++;
-        }
+      function randomColor(){
+        let colors = ["red", "orange", "yellow", "lime", "blue", "#06aae2", "violet"];
+        let color = colors[Math.floor(Math.random()* colors.length)];
+        return color;
       }
 
-      console.log("TOP:", distanceFromTop);
-      console.log("Bottom:", distanceFromBottom);
+      // Set random path to travel
+      function travelRandom(x, y, delay, lastChange) {
+        let node = document.getElementById(`${parseInt(x)},${parseInt(y)}`);
+        let orientation = "up";
+        if(node){
+          if(node.children[0].getAttribute("points") == "0,100, 50,0,100,100"){
+            orientation = "up";
+          } else {
+            orientation = "down";
+          }
+        }
+
+        let randColor = randomColor();
+
+        console.log("Orientation: ", orientation);
+        if (node == null || x > numX || y > numY) {
+          console.log("--------- Wall was hit ----------");
+          randomSeed();
+          flashScreen();
+          // travelRandom(xval, yval, 100, "x");
+          return;
+        }
+        
+        // What functionality the function is actually achieving.
+        // In this case, change the fill color of the effected triangle
+        // document.getElementById(`${parseInt(x)},${parseInt(y)}`).children[0].style.fill = randColor;
+        document.getElementById(`${parseInt(x)},${parseInt(y)}`).children[0].parentNode.classList.toggle("grow");
+
+        let rand = 0;
+        console.log("lastChange:", lastChange);
+        if (lastChange == "x") {                      // 2 -> 3
+          rand = Math.floor(Math.random() * 2) + 2;
+        } else if (lastChange == "y") {               // 0 -> 1
+          rand = Math.floor(Math.random() * 2);
+        } else {                                      // 0 -> 3
+          rand = Math.floor(Math.random() * 3);
+        }
+
+        if(orientation == "up"){
+          // Go left
+          // Go right
+          // Go down
+          // Instaed of going up, go down
+          if(rand == 3){
+            rand = 2;
+          }
+        }
+        if(orientation == "down"){
+          // Go left
+          // Go right
+          // Go up
+          // Instead of going down, go up
+          if(rand == 2){
+            rand = 3;
+          }
+        }
+
+        console.log("Random Number:", rand);
+
+        switch (rand) {
+          case 0: // Move Right
+            setTimeout(function () {
+              travelRandom(x + 1, y, delay + 5, "x");
+            }, delay);
+            break;
+          case 1: // Move Left
+            setTimeout(function () {
+              travelRandom(x - 1, y, delay + 5, "x");
+            }, delay);
+            break;
+          case 2: // Move Down
+            setTimeout(function () {
+              travelRandom(x, y + 1, delay + 5, "y");
+            }, delay);
+            break;
+          case 3: // Move Up
+            setTimeout(function () {
+              travelRandom(x, y - 1, delay + 5, "y");
+            }, delay);
+            break;
+        }
+      }
     })
   };
 }
@@ -104,29 +193,23 @@ function drawTriangles() {
       // Create the polygon and add it to the SVG
       if (j % 2 == 0) {
         if (i % 2 == 0) {
-          svg.innerHTML = `<polygon points="0,  0,100,0, 50,100" class="triangle up"></polygon><text x="40" y="40" class="small">${i + ":" +j}</text>`;
+          svg.innerHTML = `<polygon points="0,  0,100,0, 50,100" class="triangle up"><text x="40" y="40" class="small">${i + ":" +j}</text></polygon>`;
         } else {
-          svg.innerHTML = `<polygon points="0,100, 50,0,100,100" class="triangle down"></polygon><text x="40" y="40" class="small">${i + ":" +j}</text>`;
+          svg.innerHTML = `<polygon points="0,100, 50,0,100,100" class="triangle down"><text x="40" y="40" class="small">${i + ":" +j}</text></polygon>`;
         }
       } else {
         if (i % 2 == 0) {
-          svg.innerHTML = `<polygon points="0,100, 50,0,100,100" class="triangle down"></polygon><text x="40" y="40" class="small">${i + ":" +j}</text>`;
+          svg.innerHTML = `<polygon points="0,100, 50,0,100,100" class="triangle down"><text x="40" y="40" class="small">${i + ":" +j}</text></polygon>`;
         } else {
-          svg.innerHTML = `<polygon points="0,  0,100,0, 50,100" class="triangle up"></polygon><text x="40" y="40" class="small">${i + ":" +j}</text>`;
+          svg.innerHTML = `<polygon points="0,  0,100,0, 50,100" class="triangle up"><text x="40" y="40" class="small">${i + ":" +j}</text></polygon>`;
         }
       }
-
-      // setTimeout(function(){
-      //   document.getElementById("body").appendChild(svg);
-      // }, 200 * i/2);
 
       // Add the SVG to the body
       document.getElementById("body").appendChild(svg);
     }
   }
 }
-
-
 
 function traingleEffect() {
   const screenWidth = document.documentElement.clientWidth;
@@ -148,21 +231,21 @@ function traingleEffect() {
   const t0 = document.getElementById(`${x},${y}`).childNodes[0].classList;
   console.log(t0);
 
-  if (t0.contains("up")) {
-    setTimeout(function () {
-      const t1 = document.getElementById(`${x},${y}`).childNodes[0].style.fill = "white";
-    }, 500);
-    setTimeout(function () {
-      const t2 = document.getElementById(`${x},${y-1}`).childNodes[0].style.fill = "red";
-      const t3 = document.getElementById(`${x+1},${y}`).childNodes[0].style.fill = "red";
-      const t4 = document.getElementById(`${x-1},${y}`).childNodes[0].style.fill = "red";
-    }, 1000);
-  } else {
-    const t1 = document.getElementById(`${x},${y}`).childNodes[0].style.fill = "white";
-    const t2 = document.getElementById(`${x},${y+1}`).childNodes[0].style.fill = "red";
-    const t3 = document.getElementById(`${x+1},${y}`).childNodes[0].style.fill = "red";
-    const t4 = document.getElementById(`${x-1},${y}`).childNodes[0].style.fill = "red";
-  }
+  // if (t0.contains("up")) {
+  //   setTimeout(function () {
+  //     const t1 = document.getElementById(`${x},${y}`).childNodes[0].style.fill = "white";
+  //   }, 500);
+  //   setTimeout(function () {
+  //     const t2 = document.getElementById(`${x},${y-1}`).childNodes[0].style.fill = "red";
+  //     const t3 = document.getElementById(`${x+1},${y}`).childNodes[0].style.fill = "red";
+  //     const t4 = document.getElementById(`${x-1},${y}`).childNodes[0].style.fill = "red";
+  //   }, 1000);
+  // } else {
+  //   const t1 = document.getElementById(`${x},${y}`).childNodes[0].style.fill = "white";
+  //   const t2 = document.getElementById(`${x},${y+1}`).childNodes[0].style.fill = "red";
+  //   const t3 = document.getElementById(`${x+1},${y}`).childNodes[0].style.fill = "red";
+  //   const t4 = document.getElementById(`${x-1},${y}`).childNodes[0].style.fill = "red";
+  // }
 
   const t1 = document.getElementById(`${x},${y}`);
   const t2 = document.getElementById(`${x + 1},${y}`);

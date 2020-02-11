@@ -1,0 +1,72 @@
+// travelLeft(xval, yval);
+// travelRight(xval, yval);
+// travelUp(xval, yval);l
+// travelDown(xval, yval);
+
+// function travelLeft(x, y) {
+//   let node = document.getElementById(`${parseInt(x)},${parseInt(y)}`);
+//   if (node == null || x > numX || y > numY) {
+//     return;
+//   }
+//   document.getElementById(`${parseInt(x)},${parseInt(y)}`).children[0].parentNode.classList.add("grow");
+
+//   travelLeft(x - 1, y);
+// }
+
+// function travelRight(x, y) {
+//   let node = document.getElementById(`${parseInt(x)},${parseInt(y)}`);
+//   if (node == null || x > numX || y > numY) {
+//     return;
+//   }
+//   document.getElementById(`${parseInt(x)},${parseInt(y)}`).children[0].parentNode.classList.add("grow");
+
+//   travelRight(x + 1, y);
+// }
+
+// function travelUp(x, y) {
+//   let node = document.getElementById(`${parseInt(x)},${parseInt(y)}`);
+//   if (node == null || x > numX || y > numY) {
+//     return;
+//   }
+//   document.getElementById(`${parseInt(x)},${parseInt(y)}`).children[0].parentNode.classList.add("grow");
+
+//   travelUp(x, y - 1);
+// }
+
+// function travelDown(x, y) {
+//   let node = document.getElementById(`${parseInt(x)},${parseInt(y)}`);
+//   if (node == null || x > numX || y > numY) {
+//     return;
+//   }
+//   document.getElementById(`${parseInt(x)},${parseInt(y)}`).children[0].parentNode.classList.add("grow");
+
+//   travelDown(x, y + 1);
+// }
+
+
+
+
+
+
+
+
+
+
+// Check to see if new triangle has been visited before or not.
+        if(rand == 0 && document.getElementById(`${parseInt(x+1)},${parseInt(y)}`).classList.contains("visited")){
+          console.log("Already visited this node!");
+          rand = 1;
+        }
+        if(rand == 1 && document.getElementById(`${parseInt(x-1)},${parseInt(y)}`).classList.contains("visited")){
+          console.log("Already visited this node!");
+          rand = 0;
+        }
+        if(rand == 2 && document.getElementById(`${parseInt(x)},${parseInt(y+1)}`).classList.contains("visited")){
+          console.log("Already visited this node!");
+          rand = 3;
+        }
+        if(rand == 3 && document.getElementById(`${parseInt(x)},${parseInt(y-1)}`).classList.contains("visited")){
+          console.log("Already visited this node!");
+          rand = 2;
+        }
+        document.getElementById(`${parseInt(x)},${parseInt(y)}`).classList.add("visited");
